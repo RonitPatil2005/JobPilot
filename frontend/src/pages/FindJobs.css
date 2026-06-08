@@ -1,0 +1,329 @@
+.jobs-page {
+    margin-top: 85px;
+    min-height: 100vh;
+    background: #f8fafc;
+}
+
+/* HERO SECTION */
+
+.jobs-hero {
+    padding: 70px 8%;
+    text-align: center;
+    background: linear-gradient(135deg,
+            #2563eb,
+            #1d4ed8);
+    color: white;
+}
+
+.jobs-hero h1 {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.jobs-hero p {
+    font-size: 1.1rem;
+    margin-bottom: 35px;
+    opacity: .95;
+}
+
+/* SEARCH BAR */
+
+.jobs-search {
+    max-width: 1000px;
+    width: 90%;
+    margin: auto;
+    display: flex;
+    gap: 15px;
+    background: white;
+    padding: 15px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .12);
+}
+
+.search-field {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 15px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: white;
+}
+
+.search-field svg {
+    color: #2563eb;
+    font-size: 18px;
+}
+
+.search-field input {
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 15px 0;
+    font-size: 15px;
+}
+
+.jobs-search button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 0 30px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.jobs-search button:hover {
+    background: #1d4ed8;
+}
+
+/* RESUME SECTION */
+
+.resume-section {
+    width: 85%;
+    margin: 40px auto;
+    background: white;
+    padding: 35px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, .06);
+}
+
+.resume-section h2 {
+    color: #111827;
+    margin-bottom: 10px;
+}
+
+.resume-section p {
+    color: #64748b;
+}
+
+.resume-upload {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.resume-upload svg {
+    font-size: 32px;
+    color: #ef4444;
+}
+
+.resume-upload input {
+    border: 1px solid #d1d5db;
+    padding: 10px;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.resume-upload button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: .3s;
+}
+
+.resume-upload button:hover {
+    background: #1d4ed8;
+}
+
+/* ANALYSIS RESULT */
+
+.resume-result {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.resume-result h3 {
+    margin-bottom: 15px;
+    color: #111827;
+}
+
+.skills-list {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.skills-list span {
+    background: #dbeafe;
+    color: #2563eb;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.role-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: #16a34a;
+    margin-bottom: 20px;
+}
+
+.suggested-btn {
+    background: #16a34a;
+    color: white;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: .3s;
+}
+
+.suggested-btn:hover {
+    background: #15803d;
+}
+
+/* JOB RESULTS */
+
+.jobs-section {
+    width: 85%;
+    margin: auto;
+    padding-bottom: 50px;
+}
+
+.jobs-section h2 {
+    margin-bottom: 25px;
+    color: #111827;
+}
+
+.jobs-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill,
+            minmax(320px, 1fr));
+
+    gap: 25px;
+}
+
+.job-card {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, .06);
+
+    transition: .3s;
+}
+
+.job-card:hover {
+    transform: translateY(-5px);
+}
+
+.job-card h3 {
+    color: #111827;
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+.job-card h4 {
+    color: #2563eb;
+    margin-bottom: 15px;
+}
+
+.job-card p {
+    color: #64748b;
+    margin-bottom: 8px;
+}
+
+.job-card a {
+    text-decoration: none;
+}
+
+.job-card button {
+    width: 100%;
+    margin-top: 18px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: .3s;
+}
+
+.job-card button:hover {
+    background: #1d4ed8;
+}
+
+/* TABLET */
+
+@media(max-width:992px) {
+
+    .jobs-search {
+        width: 95%;
+    }
+
+    .resume-section,
+    .jobs-section {
+        width: 95%;
+    }
+}
+
+/* MOBILE */
+
+@media(max-width:768px) {
+
+    .jobs-hero {
+        padding: 60px 20px;
+    }
+
+    .jobs-hero h1 {
+        font-size: 2.2rem;
+    }
+
+    .jobs-search {
+        flex-direction: column;
+    }
+
+    .jobs-search button {
+        height: 55px;
+    }
+
+    .resume-section {
+        padding: 25px;
+    }
+
+    .resume-upload {
+        flex-direction: column;
+    }
+}
+
+/* SMALL MOBILE */
+
+@media(max-width:480px) {
+
+    .jobs-page {
+        margin-top: 75px;
+    }
+
+    .jobs-hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .jobs-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .resume-section,
+    .jobs-section {
+        width: 94%;
+    }
+}
