@@ -12,15 +12,7 @@ const app = express();
 
 /* CORS */
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://job-pilot-2agdnqfoc-ronit-patil-s-projects.vercel.app"
-    ],
-    credentials: true
-  })
-);
+app.use(cors());
 
 /* Middleware */
 
@@ -58,6 +50,17 @@ app.use((req, res) => {
   res.status(404).json({
     success: false,
     message: "API Route Not Found"
+  });
+});
+
+/* Error Handler */
+
+app.use((err, req, res, next) => {
+  console.error(err);
+
+  res.status(500).json({
+    success: false,
+    message: "Internal Server Error"
   });
 });
 
