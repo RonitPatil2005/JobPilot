@@ -1,9 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const resumeRoutes =
-  require("./routes/resumeRoutes");
-
 
 dotenv.config();
 
@@ -13,8 +10,32 @@ connectDB();
 
 const app = express();
 
-app.use(cors());
+/* CORS */
+
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://job-pilot-2agdnqfoc-ronit-patil-s-projects.vercel.app"
+    ],
+    credentials: true
+  })
+);
+
+/* Middleware */
+
 app.use(express.json());
+
+/* Health Check Route */
+
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "JobPilot Backend Running 🚀"
+  });
+});
+
+/* Routes */
 
 app.use(
   "/api/auth",
@@ -23,7 +44,7 @@ app.use(
 
 app.use(
   "/api/resume",
-  resumeRoutes
+  require("./routes/resumeRoutes")
 );
 
 app.use(
@@ -31,8 +52,18 @@ app.use(
   require("./routes/jobRoutes")
 );
 
-const PORT = process.env.PORT || 5000;
+/* 404 Route */
 
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "API Route Not Found"
+  });
+});
+
+/* Start Server */
+
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(
