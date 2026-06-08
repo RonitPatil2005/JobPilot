@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API =
-  "http://localhost:5000/api/auth";
+  "https://jobpilot-backend-wgv0.onrender.com/api/auth";
 
 export const registerUser =
   (userData) =>
