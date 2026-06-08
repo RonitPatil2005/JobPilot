@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const API_URL =
-  "http://localhost:5000/api/jobs";
+const API_URL = "https://jobpilot-backend-wgv0.onrender.com/api/jobs";
 
 export const searchJobs = async (
   keyword,
