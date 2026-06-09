@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API = "https://jobpilot-backend-wgv0.onrender.com/api/jobs";
+const API =
+  "https://jobpilot-backend-wgv0.onrender.com/api/resume";
 
 export const uploadResume =
   async (file) => {
