@@ -62,7 +62,7 @@
 .login-btn,
 .logout-btn {
     border: none;
-    background: inear-gradient(135deg, #2563eb, #1d4ed8);
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
     color: white;
     padding: 12px 28px;
     border-radius: 50px;
