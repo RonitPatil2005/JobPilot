@@ -12,7 +12,7 @@ const GEMINI_API_KEY =
 // Model is kept here.
 // No GEMINI_MODEL is required in .env.
 const GEMINI_MODEL =
-  "gemini-2.5-flash";
+  "gemini-3.6-flash";
 
 console.log(
   "Gemini API Key:",
