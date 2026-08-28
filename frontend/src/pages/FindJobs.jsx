@@ -638,13 +638,11 @@ function FindJobs() {
         <div className="resume-section">
 
           <h2>
-            Resume Based Job Suggestions
+            Analyze Your Resume with AI
           </h2>
 
           <p>
-            Upload your PDF resume
-            and discover suitable
-            job roles instantly.
+            Get an instant ATS score, discover your best-fit job roles, identify your skills, and get personalized suggestions to improve your resume.
           </p>
 
 
