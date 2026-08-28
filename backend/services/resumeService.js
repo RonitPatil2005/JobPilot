@@ -1,27 +1,315 @@
-import axios from "axios";
+const fs = require("fs");
+const pdfParse = require("pdf-parse");
+const { GoogleGenAI } = require("@google/genai");
 
-const API_URL =
-  import.meta.env.BACKEND_API_URL ||
-  "https://jobpilot-backend-wgv0.onrender.com";
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
-export const uploadResume = async (file) => {
-  console.log("Resume Service: Sending PDF...");
-  console.log("API URL:", API_URL);
+// ------------------------------------
+// Keyword-based fallback
+// ------------------------------------
 
-  const formData = new FormData();
-  formData.append("resume", file);
+function analyzeWithKeywords(text) {
+  const keywords = [
+    "react",
+    "node",
+    "express",
+    "mongodb",
+    "mysql",
+    "java",
+    "python",
+    "javascript",
+    "html",
+    "css",
+    "bootstrap",
+    "tailwind",
+    "aws",
+    "docker",
+    "git",
+    "github",
+    "c++",
+    "php",
+    "sql",
+    "rest apis",
+    "jwt",
+    "data structures and algorithms",
+    "object-oriented programming",
+  ];
 
-  const response = await axios.post(
-    `${API_URL}/api/resume/analyze`,
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+  const skills = [];
+
+  keywords.forEach((skill) => {
+    if (text.includes(skill)) {
+      skills.push(skill);
     }
-  );
+  });
 
-  console.log("Resume Service Response:", response.data);
+  let suggestedRole = "Software Developer";
 
-  return response.data;
+  if (
+    skills.includes("react") &&
+    skills.includes("javascript")
+  ) {
+    suggestedRole = "Frontend Developer";
+  }
+
+  if (
+    skills.includes("node") &&
+    skills.includes("mongodb") &&
+    skills.includes("express")
+  ) {
+    suggestedRole = "MERN Stack Developer";
+  }
+
+  if (
+    skills.includes("java") &&
+    skills.includes("sql")
+  ) {
+    suggestedRole = "Java Developer";
+  }
+
+  if (
+    skills.includes("python")
+  ) {
+    suggestedRole = "Python Developer";
+  }
+
+  return {
+    skills,
+    suggestedRole,
+  };
+}
+
+// ------------------------------------
+// Gemini Resume Analysis
+// ------------------------------------
+
+async function analyzeWithGemini(resumeText) {
+  const prompt = `
+You are an expert technical recruiter and resume analyzer.
+
+Analyze the following resume.
+
+Return ONLY valid JSON.
+
+Required JSON format:
+
+{
+  "skills": [],
+  "suggestedRole": "",
+  "alternativeRoles": [],
+  "atsScore": 0,
+  "strengths": [],
+  "weaknesses": [],
+  "suggestions": []
+}
+
+Rules:
+
+1. skills:
+   - Extract important technical skills from the resume.
+   - Include programming languages, frameworks, databases,
+     cloud, tools and important technical technologies.
+
+2. suggestedRole:
+   - Select the single most suitable technical job role based
+     on the candidate's actual skills, projects and experience.
+
+3. alternativeRoles:
+   - Give 2 to 4 other suitable technical roles.
+
+4. atsScore:
+   - Give an ATS-style score from 0 to 100.
+   - Consider skills, projects, experience, education,
+     keywords and resume structure.
+   - This is an ATS-style estimate, not an official ATS score.
+
+5. strengths:
+   - Give 3 to 5 important strengths.
+
+6. weaknesses:
+   - Give 2 to 5 areas that can be improved.
+
+7. suggestions:
+   - Give 3 to 5 practical resume improvement suggestions.
+
+Do not invent skills or experience.
+Only use information present in the resume.
+
+Resume:
+
+${resumeText}
+`;
+
+  const response = await ai.models.generateContent({
+    model: "gemini-3.7-flash",
+    contents: prompt,
+    config: {
+      temperature: 0.2,
+      responseMimeType: "application/json",
+    },
+  });
+
+  const resultText = response.text;
+
+  if (!resultText) {
+    throw new Error("Gemini returned empty response");
+  }
+
+  return JSON.parse(resultText);
+}
+
+// ------------------------------------
+// Resume Controller
+// ------------------------------------
+
+exports.analyzeResume = async (req, res) => {
+  let filePath = null;
+
+  try {
+    // Check uploaded file
+    if (!req.file) {
+      return res.status(400).json({
+        message: "No PDF file uploaded",
+      });
+    }
+
+    filePath = req.file.path;
+
+    console.log(
+      "Uploaded File:",
+      req.file
+    );
+
+    // Read PDF
+    const dataBuffer =
+      fs.readFileSync(filePath);
+
+    const pdfData =
+      await pdfParse(dataBuffer);
+
+    if (
+      !pdfData.text ||
+      !pdfData.text.trim()
+    ) {
+      return res.status(400).json({
+        message:
+          "Unable to extract text from PDF",
+      });
+    }
+
+    const resumeText =
+      pdfData.text.trim();
+
+    const normalizedText =
+      resumeText.toLowerCase();
+
+    console.log(
+      "Resume text extracted successfully"
+    );
+
+    // --------------------------------
+    // Try Gemini first
+    // --------------------------------
+
+    try {
+      console.log(
+        "Trying Gemini Resume Analysis..."
+      );
+
+      const geminiResult =
+        await analyzeWithGemini(
+          resumeText
+        );
+
+      console.log(
+        "Gemini analysis successful"
+      );
+
+      return res.status(200).json({
+        ...geminiResult,
+        analysisSource: "gemini",
+      });
+
+    } catch (geminiError) {
+      console.error(
+        "Gemini Analysis Failed:"
+      );
+
+      console.error(
+        geminiError.response?.data ||
+        geminiError.message ||
+        geminiError
+      );
+
+      console.log(
+        "Using keyword-based fallback..."
+      );
+
+      // ------------------------------
+      // Keyword fallback
+      // ------------------------------
+
+      const fallbackResult =
+        analyzeWithKeywords(
+          normalizedText
+        );
+
+      return res.status(200).json({
+        ...fallbackResult,
+
+        alternativeRoles: [],
+
+        atsScore: null,
+
+        strengths: [],
+
+        weaknesses: [],
+
+        suggestions: [
+          "AI analysis is temporarily unavailable due to a technical error.",
+        ],
+
+        analysisSource:
+          "keyword-fallback",
+      });
+    }
+
+  } catch (error) {
+    console.error(
+      "Resume Analysis Error:"
+    );
+
+    console.error(error);
+
+    return res.status(500).json({
+      message:
+        "Resume analysis failed",
+    });
+
+  } finally {
+    // --------------------------------
+    // Delete uploaded PDF
+    // --------------------------------
+
+    if (
+      filePath &&
+      fs.existsSync(filePath)
+    ) {
+      try {
+        fs.unlinkSync(filePath);
+
+        console.log(
+          "Uploaded PDF deleted"
+        );
+
+      } catch (deleteError) {
+        console.error(
+          "Unable to delete uploaded file:",
+          deleteError.message
+        );
+      }
+    }
+  }
 };
