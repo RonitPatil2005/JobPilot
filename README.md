@@ -1,16 +1,16 @@
-# 🚀 JobPilot - Centralized Job Portal
+# 🚀 JobPilot - AI-Powered Centralized Job Portal
 
-## 📌 Overview
-
-JobPilot is a full-stack MERN web application that aggregates job listings from multiple sources into a single platform. Users can search jobs, upload resumes, extract skills automatically, and discover relevant career opportunities through a modern and responsive interface.
+JobPilot is a full-stack MERN web application that brings job discovery and AI-powered resume analysis into one platform. It aggregates job listings from external sources, allows users to search by role and location, and analyzes PDF resumes to identify skills, recommend suitable roles, and provide ATS-style resume feedback.
 
 ---
 
 ## 🌐 Live Demo
 
-Frontend: https://job-pilot-iul9o0j2z-ronit-patil-s-projects.vercel.app
+**Frontend:**
+https://job-pilot-iul9o0j2z-ronit-patil-s-projects.vercel.app
 
-Backend API: https://jobpilot-backend-wgv0.onrender.com
+**Backend API:**
+https://jobpilot-backend-wgv0.onrender.com
 
 ---
 
@@ -21,27 +21,74 @@ Backend API: https://jobpilot-backend-wgv0.onrender.com
 * User Registration
 * User Login
 * JWT Authentication
-* Protected Routes
+* Protected Job Search
+* Protected AI Resume Analysis
 
 ### 💼 Job Search
 
-* Search Jobs by Keyword
-* Search Jobs by Location
-* Real-Time Job Listings
-* Centralized Job Discovery
+* Search jobs by keyword or job title
+* Search jobs by location
+* Real-time job listings
+* Centralized job discovery from multiple sources
+* Job posting date filtering
+* Direct application links
+* Displays company, location, employment type, source, and posting date
 
-### 📄 Resume Analysis
+### 🤖 AI Resume Analysis
 
 * PDF Resume Upload
-* Automatic Skill Extraction
-* Suggested Career Role Detection
+* Resume Text Extraction
+* AI-powered Resume Analysis using Google Gemini
+* Automatic Technical Skill Extraction
+* Best-Match Job Role Detection
+* Alternative Career Role Suggestions
+* ATS-style Resume Score
+* Resume Strength Analysis
+* Areas for Improvement
+* AI-generated Resume Improvement Suggestions
+* Keyword-based fallback when AI analysis is temporarily unavailable
 
 ### 📱 User Experience
 
-* Responsive Design
-* Mobile Friendly UI
-* Fast Search Experience
-* Modern Dashboard Interface
+* Modern and responsive interface
+* Mobile-friendly design
+* Interactive job search
+* Resume analysis dashboard
+* Smooth navigation
+* Clean job cards and analysis sections
+
+---
+
+## 🧠 AI Resume Analysis
+
+JobPilot uses **Google Gemini** to analyze uploaded resumes and generate structured career insights.
+
+The AI analyzes:
+
+* Programming Languages
+* Frameworks and Libraries
+* Databases
+* Developer Tools
+* APIs
+* Technical Concepts
+* Projects
+* Experience
+* Education
+* Resume Keywords
+
+### AI Analysis Output
+
+The system provides:
+
+* **ATS Resume Score**
+* **Detected Technical Skills**
+* **Best Match Role**
+* **Alternative Roles**
+* **Resume Strengths**
+* **Areas to Improve**
+* **Resume Improvement Suggestions**
+
+If the Gemini API is temporarily unavailable, JobPilot automatically uses a **keyword-based fallback system** so the resume analysis feature can still provide basic skill and role suggestions.
 
 ---
 
@@ -54,91 +101,246 @@ Backend API: https://jobpilot-backend-wgv0.onrender.com
 * React Router DOM
 * Axios
 * React Icons
+* CSS
 
 ### Backend
 
 * Node.js
 * Express.js
+* Axios
 
 ### Database
 
 * MongoDB Atlas
 * Mongoose
 
-### Authentication
+### Authentication & Security
 
 * JWT (JSON Web Token)
 * bcryptjs
+* Protected API Routes
 
 ### Resume Processing
 
 * Multer
 * PDF-Parse
 
-### External API
+### AI
+
+* Google Gemini API
+* Gemini Flash Model
+* Structured JSON AI Responses
+
+### External Job API
 
 * JSearch API
 
 ### Deployment
 
-* Vercel (Frontend)
-* Render (Backend)
+* Vercel - Frontend
+* Render - Backend
+* MongoDB Atlas - Database
+
+---
 
 ## ⚙️ Installation
 
-### Clone Repository
+### 1. Clone Repository
 
+```bash
 git clone https://github.com/RonitPatil2005/JobPilot.git
 
 cd JobPilot
+```
 
-### Backend Setup
+---
 
+### 2. Backend Setup
+
+```bash
 cd backend
-npm install
-Create a .env file:
 
+npm install
+```
+
+Create a `.env` file inside the `backend` folder:
+
+```env
 MONGO_URI=your_mongodb_connection_string
 
 JWT_SECRET=your_secret_key
 
-JSEARCH_API_KEY=your_api_key
+JSEARCH_API_KEY=your_jsearch_api_key
 
-Run Backend: npm run dev
+GEMINI_API_KEY=your_gemini_api_key
+```
 
-### Frontend Setup
-cd frontend
-npm install
+Start the backend:
+
+```bash
 npm run dev
+```
 
-## 🚀 How It Works
+---
 
-1. User creates an account or logs in.
-2. User searches jobs using keywords and location.
-3. JobPilot fetches jobs from external sources.
-4. User uploads a PDF resume.
-5. Skills are extracted automatically.
-6. Suggested job role is generated based on skills.
+### 3. Frontend Setup
+
+Open another terminal:
+
+```bash
+cd frontend
+
+npm install
+
+npm run dev
+```
+
+The frontend will run using the Vite development server.
+
+---
+
+## 🚀 How JobPilot Works
+
+### Job Search Flow
+
+```text
+User Login
+     ↓
+Enter Job Keyword & Location
+     ↓
+JobPilot Backend
+     ↓
+JSearch API
+     ↓
+Job Listings
+     ↓
+Display Jobs
+     ↓
+Apply Through External Job Link
+```
+
+### AI Resume Analysis Flow
+
+```text
+User Login
+     ↓
+Upload PDF Resume
+     ↓
+Backend Authentication
+     ↓
+PDF Text Extraction
+     ↓
+Google Gemini AI
+     ↓
+Resume Analysis
+     ↓
+Skills + ATS Score + Roles
+     ↓
+Strengths + Weaknesses
+     ↓
+Resume Improvement Suggestions
+```
+
+### AI Fallback Flow
+
+```text
+Resume Upload
+     ↓
+PDF Text Extraction
+     ↓
+Try Gemini AI
+     ↓
+ ┌───────────────┐
+ │ Gemini Works? │
+ └───────┬───────┘
+       Yes                    No
+        ↓                      ↓
+   AI Analysis          Keyword Analysis
+        ↓                      ↓
+        └──────────┬───────────┘
+                   ↓
+            Analysis Result
+```
+
+---
+
+## 🔒 Security
+
+JobPilot implements authentication and protected functionality using:
+
+* JWT-based authentication
+* Password hashing with bcryptjs
+* Protected backend routes
+* Login requirement for job search
+* Login requirement for AI resume analysis
+* API keys stored in environment variables
+* Uploaded resumes processed on the backend
+* Uploaded resume files deleted after processing
+
+> API keys and database credentials are never stored directly in the source code.
+
+---
+
+## 📊 Example AI Resume Analysis
+
+A resume can produce results such as:
+
+**ATS Score:** 76/100
+
+**Best Match Role:** MERN Stack Developer
+
+**Other Suitable Roles:**
+
+* Full Stack Developer
+* Frontend Developer
+* React Developer
+* Software Engineer Intern
+
+**Analysis includes:**
+
+* Technical skills
+* Resume strengths
+* Areas to improve
+* Resume improvement suggestions
+* ATS-style evaluation
+
+---
 
 ## 📚 Learning Outcomes
 
 This project helped me gain hands-on experience in:
 
 * Full Stack MERN Development
+* React.js Development
 * REST API Development
-* Authentication & Authorization
+* JWT Authentication & Authorization
 * MongoDB Integration
+* External API Integration
+* AI API Integration
 * Resume Parsing
-* API Integration
-* Deployment on Cloud Platforms
+* PDF Text Extraction
+* Structured AI Responses
+* Error Handling and Fallback Systems
 * Responsive UI Development
+* Cloud Deployment
+* Environment Variable Management
+* Frontend-Backend Integration
+
+---
 
 ## 🔮 Future Improvements
+
+The following features can be added in future versions:
+
 * Save Jobs Feature
-* ATS Resume Score
 * User Profile Dashboard
-* AI-Based Job Recommendations
-* Email Notifications
+* Personalized AI Job Recommendations
+* Resume-to-Job Matching Score
 * Job Application Tracker
+* Email Notifications
 * Advanced Search Filters
 * Admin Dashboard
+* Saved Resume Analysis History
+* Multiple Resume Comparison
+* AI-powered Job Description Analysis
+
