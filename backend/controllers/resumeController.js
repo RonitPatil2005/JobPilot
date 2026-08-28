@@ -41,36 +41,76 @@ function analyzeWithKeywords(text) {
     }
   });
 
-  let suggestedRole = "Software Developer";
 
+  // ------------------------------------
+  // Role detection with priority
+  // ------------------------------------
+
+  let suggestedRole =
+    "Software Developer";
+
+
+  // 1. MERN Stack
   if (
+    skills.includes("react") &&
+    skills.includes("node") &&
+    skills.includes("express") &&
+    skills.includes("mongodb")
+  ) {
+
+    suggestedRole =
+      "MERN Stack Developer";
+
+  }
+
+  // 2. Frontend
+  else if (
     skills.includes("react") &&
     skills.includes("javascript")
   ) {
-    suggestedRole = "Frontend Developer";
+
+    suggestedRole =
+      "Frontend Developer";
+
   }
 
-  if (
+  // 3. Backend
+  else if (
     skills.includes("node") &&
-    skills.includes("mongodb")
+    skills.includes("express")
   ) {
-    suggestedRole = "MERN Stack Developer";
+
+    suggestedRole =
+      "Backend Developer";
+
   }
 
-  if (skills.includes("python")) {
-    suggestedRole = "Python Developer";
+  // 4. Python
+  else if (
+    skills.includes("python")
+  ) {
+
+    suggestedRole =
+      "Python Developer";
+
   }
 
-  if (skills.includes("java")) {
-    suggestedRole = "Java Developer";
+  // 5. Java
+  else if (
+    skills.includes("java")
+  ) {
+
+    suggestedRole =
+      "Java Developer";
+
   }
+
 
   return {
     skills,
     suggestedRole
   };
 }
-
 
 // ------------------------------------
 // Gemini Resume Analysis
