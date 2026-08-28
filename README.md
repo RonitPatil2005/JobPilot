@@ -5,12 +5,7 @@ JobPilot is a full-stack MERN web application that brings job discovery and AI-p
 ---
 
 ## 🌐 Live Demo
-
-**Frontend:**
-https://job-pilot-iul9o0j2z-ronit-patil-s-projects.vercel.app
-
-**Backend API:**
-https://jobpilot-backend-wgv0.onrender.com
+https://job-pilot-rust-delta.vercel.app/
 
 ---
 
