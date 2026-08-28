@@ -1,4 +1,3 @@
-```jsx
 import {
   useState
 } from "react";
@@ -269,4 +268,3 @@ function ResumeAnalyzer() {
 }
 
 export default ResumeAnalyzer;
-```
