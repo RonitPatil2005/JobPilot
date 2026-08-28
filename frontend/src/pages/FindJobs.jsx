@@ -257,13 +257,13 @@ function FindJobs() {
               <FaSearch />
 
               <input
+                id="job-keyword"
+                name="job-keyword"
                 type="text"
                 placeholder="Job Title, Skills..."
                 value={keyword}
                 onChange={(e) =>
-                  setKeyword(
-                    e.target.value
-                  )
+                  setKeyword(e.target.value)
                 }
               />
 
@@ -275,13 +275,13 @@ function FindJobs() {
               <FaMapMarkerAlt />
 
               <input
+                id="job-location"
+                name="job-location"
                 type="text"
                 placeholder="Location"
                 value={location}
                 onChange={(e) =>
-                  setLocation(
-                    e.target.value
-                  )
+                  setLocation(e.target.value)
                 }
               />
 
@@ -325,6 +325,8 @@ function FindJobs() {
             <FaFilePdf />
 
             <input
+              id="resume-file"
+              name="resume"
               type="file"
               accept=".pdf"
               onChange={(e) =>
@@ -556,13 +558,13 @@ function FindJobs() {
               {analysisSource ===
                 "keyword-fallback" && (
 
-                <p>
-                  AI analysis is temporarily
-                  unavailable due to a
-                  technical error.
-                </p>
+                  <p>
+                    AI analysis is temporarily
+                    unavailable due to a
+                    technical error.
+                  </p>
 
-              )}
+                )}
 
 
               {/* SEARCH SUGGESTED ROLE */}
