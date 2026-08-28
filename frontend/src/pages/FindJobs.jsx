@@ -20,15 +20,26 @@ function FindJobs() {
 
   const [loading, setLoading] = useState(false);
 
+  // Resume states
   const [resumeFile, setResumeFile] = useState(null);
   const [skills, setSkills] = useState([]);
   const [suggestedRole, setSuggestedRole] = useState("");
+  const [alternativeRoles, setAlternativeRoles] = useState([]);
+
+  const [atsScore, setAtsScore] = useState(null);
+  const [strengths, setStrengths] = useState([]);
+  const [weaknesses, setWeaknesses] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
+
+  const [analysisSource, setAnalysisSource] = useState("");
 
   const [resumeLoading, setResumeLoading] = useState(false);
-
   const [roleLoading, setRoleLoading] = useState(false);
 
+
+  // ------------------------------------
   // SEARCH JOBS
+  // ------------------------------------
 
   const handleSearch = async () => {
 
@@ -40,116 +51,183 @@ function FindJobs() {
     }
 
     try {
+
       setLoading(true);
+
       const data = await searchJobs(
-          keyword,
+        keyword,
+        location
+      );
+
+      setJobs(data);
+
+      setTimeout(() => {
+
+        document
+          .querySelector(".jobs-section")
+          ?.scrollIntoView({
+            behavior: "smooth"
+          });
+
+      }, 300);
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Unable to fetch jobs"
+      );
+
+    } finally {
+
+      setLoading(false);
+
+    }
+  };
+
+
+  // ------------------------------------
+  // RESUME ANALYSIS
+  // ------------------------------------
+
+  const handleResumeUpload = async () => {
+
+    if (!resumeFile) {
+
+      alert(
+        "Please upload PDF Resume"
+      );
+
+      return;
+    }
+
+    try {
+
+      setResumeLoading(true);
+
+      const data = await uploadResume(
+        resumeFile
+      );
+
+      console.log(
+        "Resume Analysis Result:",
+        data
+      );
+
+
+      // --------------------------------
+      // Basic results
+      // --------------------------------
+
+      setSkills(
+        data.skills || []
+      );
+
+      setSuggestedRole(
+        data.suggestedRole || ""
+      );
+
+
+      // --------------------------------
+      // Gemini detailed results
+      // --------------------------------
+
+      setAlternativeRoles(
+        data.alternativeRoles || []
+      );
+
+      setAtsScore(
+        data.atsScore ?? null
+      );
+
+      setStrengths(
+        data.strengths || []
+      );
+
+      setWeaknesses(
+        data.weaknesses || []
+      );
+
+      setSuggestions(
+        data.suggestions || []
+      );
+
+      setAnalysisSource(
+        data.analysisSource || ""
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "Resume Analysis Error:",
+        error
+      );
+
+      alert(
+        "Resume analysis failed"
+      );
+
+    } finally {
+
+      setResumeLoading(false);
+
+    }
+  };
+
+
+  // ------------------------------------
+  // SEARCH JOBS USING SUGGESTED ROLE
+  // ------------------------------------
+
+  const searchSuggestedRole = async () => {
+
+    if (!suggestedRole) return;
+
+    try {
+
+      setRoleLoading(true);
+
+      setKeyword(
+        suggestedRole
+      );
+
+      const data =
+        await searchJobs(
+          suggestedRole,
           location
         );
 
       setJobs(data);
 
       setTimeout(() => {
-        document.querySelector(".jobs-section")?.scrollIntoView({behavior: "smooth"});
+
+        document
+          .querySelector(
+            ".jobs-section"
+          )
+          ?.scrollIntoView({
+            behavior: "smooth"
+          });
+
       }, 300);
 
     } catch (error) {
+
+      console.log(error);
+
       alert(
         "Unable to fetch jobs"
       );
 
     } finally {
-        setLoading(false);
-      }
+
+      setRoleLoading(false);
+
+    }
   };
 
-  // RESUME ANALYSIS
-
-  const handleResumeUpload =
-    async () => {
-
-      if (!resumeFile) {
-        alert(
-          "Please upload PDF Resume"
-        );
-        return;
-      }
-
-      try {
-        setResumeLoading(true);
-
-        const data = await uploadResume(
-            resumeFile
-          );
-
-        setSkills(
-          data.skills || []
-        );
-
-        setSuggestedRole(
-          data.suggestedRole || ""
-        );
-
-      } catch (error) {
-        alert(
-          "Resume analysis failed"
-        );
-
-      } finally {
-
-        setResumeLoading(false);
-
-      }
-    };
-
-  // SEARCH JOBS USING SUGGESTED ROLE
-
-  const searchSuggestedRole =
-    async () => {
-
-      if (!suggestedRole) return;
-
-      try {
-
-        setRoleLoading(true);
-
-        setKeyword(
-          suggestedRole
-        );
-
-        const data =
-          await searchJobs(
-            suggestedRole,
-            location
-          );
-
-        setJobs(data);
-
-        setTimeout(() => {
-
-          document
-            .querySelector(
-              ".jobs-section"
-            )
-            ?.scrollIntoView({
-              behavior: "smooth"
-            });
-
-        }, 300);
-
-      } catch (error) {
-
-        console.log(error);
-
-        alert(
-          "Unable to fetch jobs"
-        );
-
-      } finally {
-
-        setRoleLoading(false);
-
-      }
-    };
 
   return (
     <>
@@ -171,6 +249,7 @@ function FindJobs() {
             websites in one place.
           </p>
 
+
           <div className="jobs-search">
 
             <div className="search-field">
@@ -190,6 +269,7 @@ function FindJobs() {
 
             </div>
 
+
             <div className="search-field">
 
               <FaMapMarkerAlt />
@@ -207,6 +287,7 @@ function FindJobs() {
 
             </div>
 
+
             <button
               onClick={
                 handleSearch
@@ -223,6 +304,7 @@ function FindJobs() {
 
         </div>
 
+
         {/* RESUME ANALYZER */}
 
         <div className="resume-section">
@@ -236,6 +318,7 @@ function FindJobs() {
             and discover suitable
             job roles instantly.
           </p>
+
 
           <div className="resume-upload">
 
@@ -251,6 +334,7 @@ function FindJobs() {
               }
             />
 
+
             <button
               onClick={
                 handleResumeUpload
@@ -265,9 +349,17 @@ function FindJobs() {
 
           </div>
 
+
+          {/* --------------------------------
+              RESUME RESULTS
+          -------------------------------- */}
+
           {skills.length > 0 && (
 
             <div className="resume-result">
+
+
+              {/* SKILLS */}
 
               <h3>
                 Skills Found
@@ -292,6 +384,9 @@ function FindJobs() {
 
               </div>
 
+
+              {/* SUGGESTED ROLE */}
+
               <h3>
                 Suggested Role
               </h3>
@@ -299,6 +394,178 @@ function FindJobs() {
               <p className="role-text">
                 {suggestedRole}
               </p>
+
+
+              {/* ALTERNATIVE ROLES */}
+
+              {alternativeRoles.length > 0 && (
+
+                <>
+
+                  <h3>
+                    Alternative Roles
+                  </h3>
+
+                  <div className="skills-list">
+
+                    {alternativeRoles.map(
+                      (
+                        role,
+                        index
+                      ) => (
+
+                        <span
+                          key={index}
+                        >
+                          {role}
+                        </span>
+
+                      )
+                    )}
+
+                  </div>
+
+                </>
+
+              )}
+
+
+              {/* ATS SCORE */}
+
+              {atsScore !== null && (
+
+                <>
+
+                  <h3>
+                    ATS Score
+                  </h3>
+
+                  <p className="role-text">
+                    {atsScore}/100
+                  </p>
+
+                </>
+
+              )}
+
+
+              {/* STRENGTHS */}
+
+              {strengths.length > 0 && (
+
+                <>
+
+                  <h3>
+                    Strengths
+                  </h3>
+
+                  <ul>
+
+                    {strengths.map(
+                      (
+                        strength,
+                        index
+                      ) => (
+
+                        <li
+                          key={index}
+                        >
+                          {strength}
+                        </li>
+
+                      )
+                    )}
+
+                  </ul>
+
+                </>
+
+              )}
+
+
+              {/* WEAKNESSES */}
+
+              {weaknesses.length > 0 && (
+
+                <>
+
+                  <h3>
+                    Areas to Improve
+                  </h3>
+
+                  <ul>
+
+                    {weaknesses.map(
+                      (
+                        weakness,
+                        index
+                      ) => (
+
+                        <li
+                          key={index}
+                        >
+                          {weakness}
+                        </li>
+
+                      )
+                    )}
+
+                  </ul>
+
+                </>
+
+              )}
+
+
+              {/* SUGGESTIONS */}
+
+              {suggestions.length > 0 && (
+
+                <>
+
+                  <h3>
+                    Resume Improvement Suggestions
+                  </h3>
+
+                  <ul>
+
+                    {suggestions.map(
+                      (
+                        suggestion,
+                        index
+                      ) => (
+
+                        <li
+                          key={index}
+                        >
+                          {suggestion}
+                        </li>
+
+                      )
+                    )}
+
+                  </ul>
+
+                </>
+
+              )}
+
+
+              {/* ANALYSIS SOURCE */}
+
+              {analysisSource ===
+                "keyword-fallback" && (
+
+                <p>
+                  AI analysis is temporarily
+                  unavailable due to a
+                  technical error.
+                </p>
+
+              )}
+
+
+              {/* SEARCH SUGGESTED ROLE */}
 
               <button
                 className="suggested-btn"
@@ -316,11 +583,13 @@ function FindJobs() {
                 }
               </button>
 
+
             </div>
 
           )}
 
         </div>
+
 
         {/* JOB RESULTS */}
 
@@ -329,6 +598,7 @@ function FindJobs() {
           <h2>
             {jobs.length} Jobs Found
           </h2>
+
 
           <div className="jobs-grid">
 
@@ -384,9 +654,11 @@ function FindJobs() {
                     target="_blank"
                     rel="noreferrer"
                   >
+
                     <button>
                       Apply Now
                     </button>
+
                   </a>
 
                 </div>
