@@ -4,14 +4,19 @@
     background: #f8fafc;
 }
 
-/* HERO SECTION */
+
+/* =========================================
+   HERO SECTION
+========================================= */
 
 .jobs-hero {
     padding: 70px 8%;
     text-align: center;
-    background: linear-gradient(135deg,
-            #2563eb,
-            #1d4ed8);
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
     color: white;
 }
 
@@ -27,7 +32,10 @@
     opacity: .95;
 }
 
-/* SEARCH BAR */
+
+/* =========================================
+   SEARCH BAR
+========================================= */
 
 .jobs-search {
     max-width: 1000px;
@@ -50,11 +58,18 @@
     border: 1px solid #e5e7eb;
     border-radius: 12px;
     background: white;
+    transition: .25s;
+}
+
+.search-field:focus-within {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .08);
 }
 
 .search-field svg {
     color: #2563eb;
     font-size: 18px;
+    flex-shrink: 0;
 }
 
 .search-field input {
@@ -80,14 +95,22 @@
     background: #1d4ed8;
 }
 
-/* RESUME SECTION */
+.jobs-search button:disabled {
+    opacity: .7;
+    cursor: not-allowed;
+}
+
+
+/* =========================================
+   RESUME SECTION
+========================================= */
 
 .resume-section {
     width: 85%;
     margin: 40px auto;
     background: white;
-    padding: 35px;
-    border-radius: 20px;
+    padding: 40px;
+    border-radius: 22px;
     text-align: center;
     box-shadow: 0 5px 20px rgba(0, 0, 0, .06);
 }
@@ -95,11 +118,19 @@
 .resume-section h2 {
     color: #111827;
     margin-bottom: 10px;
+    font-size: 28px;
 }
 
-.resume-section p {
+.resume-section > p {
     color: #64748b;
+    margin-bottom: 5px;
+    line-height: 1.6;
 }
+
+
+/* =========================================
+   RESUME UPLOAD
+========================================= */
 
 .resume-upload {
     margin-top: 25px;
@@ -113,6 +144,7 @@
 .resume-upload svg {
     font-size: 32px;
     color: #ef4444;
+    flex-shrink: 0;
 }
 
 .resume-upload input {
@@ -120,6 +152,7 @@
     padding: 10px;
     border-radius: 10px;
     background: #fff;
+    max-width: 100%;
 }
 
 .resume-upload button {
@@ -137,59 +170,428 @@
     background: #1d4ed8;
 }
 
-/* ANALYSIS RESULT */
+.resume-upload button:disabled {
+    opacity: .7;
+    cursor: not-allowed;
+}
+
+
+/* =========================================
+   SELECTED FILE
+========================================= */
+
+.selected-file {
+    margin-top: 15px !important;
+    font-size: 14px;
+    color: #475569 !important;
+    font-weight: 500;
+}
+
+
+/* =========================================
+   RESUME ERROR
+========================================= */
+
+.resume-error {
+    margin: 18px auto 0 !important;
+    max-width: 700px;
+    padding: 12px 16px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    color: #dc2626 !important;
+    font-size: 14px;
+}
+
+
+/* =========================================
+   ANALYSIS RESULT
+========================================= */
 
 .resume-result {
-    margin-top: 30px;
-    padding-top: 20px;
+    margin-top: 35px;
+    padding-top: 30px;
     border-top: 1px solid #e5e7eb;
+
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    text-align: left;
 }
 
-.resume-result h3 {
-    margin-bottom: 15px;
-    color: #111827;
+
+/* =========================================
+   AI ANALYSIS STATUS
+========================================= */
+
+.analysis-source {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto 5px;
+
+    padding: 10px 18px;
+    border-radius: 30px;
+
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.5;
 }
+
+.analysis-source svg {
+    flex-shrink: 0;
+}
+
+.analysis-source.success {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
+.analysis-source.warning {
+    background: #fffbeb;
+    color: #d97706;
+    border: 1px solid #fde68a;
+}
+
+
+/* =========================================
+   ATS SCORE SECTION
+========================================= */
+
+.ats-section {
+    position: relative;
+
+    padding: 25px;
+    border-radius: 18px;
+
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+
+    overflow: hidden;
+}
+
+.ats-section::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    width: 4px;
+    height: 100%;
+
+    background: #2563eb;
+}
+
+.ats-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    margin: 0 0 22px;
+
+    color: #111827;
+    font-size: 18px;
+}
+
+.ats-section h3 svg {
+    color: #f59e0b;
+}
+
+.ats-score {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.ats-number {
+    min-width: 100px;
+
+    font-size: 38px;
+    font-weight: 800;
+    line-height: 1;
+
+    color: #2563eb;
+}
+
+.ats-number span {
+    font-size: 16px;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.ats-bar {
+    flex: 1;
+    height: 12px;
+
+    background: #e5e7eb;
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+.ats-progress {
+    height: 100%;
+
+    background: #2563eb;
+    border-radius: 20px;
+
+    transition: width .8s ease;
+}
+
+.ats-section > p {
+    margin: 15px 0 0;
+
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+
+/* =========================================
+   ANALYSIS CARDS
+========================================= */
+
+.analysis-card {
+    background: #fff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+
+    padding: 24px;
+
+    box-shadow: 0 3px 12px rgba(0, 0, 0, .035);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease;
+}
+
+.analysis-card:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, .07);
+
+    border-color: #dbeafe;
+}
+
+.analysis-card h3 {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    margin: 0 0 18px;
+
+    color: #111827;
+    font-size: 18px;
+}
+
+.analysis-card h3 svg {
+    color: #2563eb;
+    font-size: 17px;
+}
+
+
+/* =========================================
+   SKILLS
+========================================= */
 
 .skills-list {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 25px;
+
+    gap: 9px;
+
+    margin: 0;
 }
 
 .skills-list span {
     background: #dbeafe;
     color: #2563eb;
-    padding: 8px 15px;
+
+    padding: 8px 13px;
+
     border-radius: 20px;
-    font-size: 14px;
-    font-weight: 500;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    border: 1px solid #bfdbfe;
+
+    transition: .2s;
+}
+
+.skills-list span:hover {
+    transform: translateY(-1px);
+}
+
+
+/* =========================================
+   BEST MATCH ROLE
+========================================= */
+
+.suggested-role-card {
+    position: relative;
+
+    background: linear-gradient(
+        135deg,
+        #ffffff,
+        #f8fafc
+    );
+
+    border: 1px solid #dbeafe;
+}
+
+.suggested-role-card h3 svg {
+    color: #16a34a;
 }
 
 .role-text {
-    font-size: 22px;
-    font-weight: 700;
+    margin: 0 0 20px;
+
+    font-size: 25px;
+    font-weight: 800;
+
     color: #16a34a;
-    margin-bottom: 20px;
+
+    line-height: 1.3;
 }
+
+
+/* =========================================
+   SUGGESTED ROLE BUTTON
+========================================= */
 
 .suggested-btn {
     background: #16a34a;
     color: white;
+
     border: none;
+
     padding: 12px 22px;
+
     border-radius: 10px;
+
     cursor: pointer;
+
     font-weight: 600;
+
     transition: .3s;
 }
 
 .suggested-btn:hover {
     background: #15803d;
+    transform: translateY(-1px);
 }
 
-/* JOB RESULTS */
+.suggested-btn:disabled {
+    opacity: .7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+/* =========================================
+   ALTERNATIVE ROLES
+========================================= */
+
+.alternative-roles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.alternative-role {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 10px 15px;
+
+    background: #f8fafc;
+    border: 1px solid #dbeafe;
+
+    color: #334155;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: .2s;
+}
+
+.alternative-role:hover {
+    background: #dbeafe;
+    color: #2563eb;
+    transform: translateY(-1px);
+}
+
+
+/* =========================================
+   ANALYSIS LIST
+========================================= */
+
+.analysis-list {
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.analysis-list li {
+    position: relative;
+
+    padding: 13px 15px 13px 36px;
+
+    background: #f8fafc;
+
+    border-radius: 10px;
+
+    color: #475569;
+
+    font-size: 14px;
+    line-height: 1.6;
+
+    border: 1px solid #f1f5f9;
+}
+
+.analysis-list li::before {
+    content: "•";
+
+    position: absolute;
+    left: 16px;
+    top: 11px;
+
+    color: #2563eb;
+
+    font-size: 20px;
+    font-weight: 700;
+}
+
+
+/* Strengths */
+
+.analysis-card:has(.analysis-list) {
+    overflow: hidden;
+}
+
+
+/* =========================================
+   JOB RESULTS
+========================================= */
 
 .jobs-section {
     width: 85%;
@@ -200,46 +602,85 @@
 .jobs-section h2 {
     margin-bottom: 25px;
     color: #111827;
+    font-size: 26px;
 }
+
+.no-jobs {
+    color: #64748b;
+}
+
+
+/* =========================================
+   JOB GRID
+========================================= */
 
 .jobs-grid {
     display: grid;
 
     grid-template-columns:
-        repeat(auto-fill,
-            minmax(320px, 1fr));
+        repeat(
+            auto-fill,
+            minmax(320px, 1fr)
+        );
 
     gap: 25px;
 }
 
+
+/* =========================================
+   JOB CARD
+========================================= */
+
 .job-card {
     background: white;
+
     padding: 25px;
+
     border-radius: 20px;
+
     box-shadow:
         0 5px 20px rgba(0, 0, 0, .06);
 
-    transition: .3s;
+    border: 1px solid #f1f5f9;
+
+    transition:
+        transform .3s,
+        box-shadow .3s;
 }
 
 .job-card:hover {
     transform: translateY(-5px);
+
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, .09);
 }
 
 .job-card h3 {
     color: #111827;
+
     margin-bottom: 10px;
+
     font-size: 20px;
+
+    line-height: 1.4;
 }
 
 .job-card h4 {
     color: #2563eb;
+
     margin-bottom: 15px;
+
+    font-size: 16px;
 }
 
 .job-card p {
     color: #64748b;
+
     margin-bottom: 8px;
+
+    font-size: 14px;
+
+    line-height: 1.5;
 }
 
 .job-card a {
@@ -248,24 +689,36 @@
 
 .job-card button {
     width: 100%;
+
     margin-top: 18px;
+
     background: #2563eb;
     color: white;
+
     border: none;
+
     padding: 14px;
+
     border-radius: 12px;
+
     cursor: pointer;
+
     font-weight: 600;
+
     transition: .3s;
 }
 
 .job-card button:hover {
     background: #1d4ed8;
+    transform: translateY(-1px);
 }
 
-/* TABLET */
 
-@media(max-width:992px) {
+/* =========================================
+   TABLET
+========================================= */
+
+@media(max-width: 992px) {
 
     .jobs-search {
         width: 95%;
@@ -275,11 +728,19 @@
     .jobs-section {
         width: 95%;
     }
+
+    .resume-section {
+        padding: 35px;
+    }
+
 }
 
-/* MOBILE */
 
-@media(max-width:768px) {
+/* =========================================
+   MOBILE
+========================================= */
+
+@media(max-width: 768px) {
 
     .jobs-hero {
         padding: 60px 20px;
@@ -304,11 +765,48 @@
     .resume-upload {
         flex-direction: column;
     }
+
+    /* ATS mobile */
+
+    .ats-score {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 18px;
+    }
+
+    .ats-number {
+        min-width: auto;
+        text-align: center;
+    }
+
+    .ats-bar {
+        width: 100%;
+    }
+
+    /* Analysis cards */
+
+    .analysis-card,
+    .ats-section {
+        padding: 20px;
+    }
+
+    .role-text {
+        font-size: 22px;
+    }
+
+    .analysis-source {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
 }
 
-/* SMALL MOBILE */
 
-@media(max-width:480px) {
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media(max-width: 480px) {
 
     .jobs-page {
         margin-top: 75px;
@@ -326,4 +824,61 @@
     .jobs-section {
         width: 94%;
     }
+
+    .resume-section {
+        padding: 22px 16px;
+    }
+
+    .resume-section h2 {
+        font-size: 23px;
+    }
+
+    .resume-upload input {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .resume-upload button {
+        width: 100%;
+    }
+
+    .analysis-card,
+    .ats-section {
+        padding: 18px;
+        border-radius: 15px;
+    }
+
+    .analysis-card h3,
+    .ats-section h3 {
+        font-size: 16px;
+    }
+
+    .skills-list {
+        gap: 7px;
+    }
+
+    .skills-list span {
+        padding: 7px 10px;
+        font-size: 12px;
+    }
+
+    .alternative-role {
+        width: 100%;
+        box-sizing: border-box;
+        justify-content: center;
+    }
+
+    .suggested-btn {
+        width: 100%;
+    }
+
+    .role-text {
+        font-size: 20px;
+    }
+
+    .analysis-list li {
+        padding-left: 32px;
+        font-size: 13px;
+    }
+
 }
