@@ -6,7 +6,6 @@ const MAX_JOB_AGE_DAYS =
   Number(process.env.MAX_JOB_AGE_DAYS) || 15;
 
 // Number of JSearch pages to fetch
-// 1 page ≈ 10 jobs
 const NUM_PAGES = 3;
 
 
@@ -23,9 +22,7 @@ const getJobDate = (job) => {
       Number(job.job_posted_at_timestamp);
 
     if (!isNaN(timestamp)) {
-
       return new Date(timestamp * 1000);
-
     }
   }
 
@@ -37,9 +34,7 @@ const getJobDate = (job) => {
       new Date(job.job_posted_at_datetime);
 
     if (!isNaN(date.getTime())) {
-
       return date;
-
     }
   }
 
@@ -74,7 +69,6 @@ const searchJobs = async (
             num_pages:
               String(NUM_PAGES),
 
-            // Ask JSearch for a recent pool
             date_posted: "month"
 
           },
@@ -107,6 +101,26 @@ const searchJobs = async (
 
 
     // ------------------------------------
+    // TEMPORARY DEBUG
+    // ------------------------------------
+
+    jobs.forEach((job, index) => {
+
+      console.log(
+        `Job ${index + 1}:`,
+        job.job_title,
+        "| timestamp:",
+        job.job_posted_at_timestamp,
+        "| datetime:",
+        job.job_posted_at_datetime,
+        "| posted:",
+        job.job_posted_at
+      );
+
+    });
+
+
+    // ------------------------------------
     // Calculate cutoff date
     // ------------------------------------
 
@@ -124,6 +138,17 @@ const searchJobs = async (
       );
 
 
+    console.log(
+      "Current date:",
+      now.toISOString()
+    );
+
+    console.log(
+      "Cutoff date:",
+      cutoffDate.toISOString()
+    );
+
+
     // ------------------------------------
     // Filter recent jobs
     // ------------------------------------
@@ -135,13 +160,24 @@ const searchJobs = async (
           getJobDate(job);
 
 
-        // If posting date is missing,
-        // don't assume it is recent
         if (!jobDate) {
+
+          console.log(
+            "No valid date:",
+            job.job_title
+          );
 
           return false;
 
         }
+
+
+        console.log(
+          "Checking:",
+          job.job_title,
+          "| Job date:",
+          jobDate.toISOString()
+        );
 
 
         return jobDate >= cutoffDate;
