@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API_URL =
-  import.meta.env.VITE_API_URL ||
+  import.meta.env.BACKEND_API_URL ||
   "https://jobpilot-backend-wgv0.onrender.com";
 
 export const uploadResume = async (file) => {
