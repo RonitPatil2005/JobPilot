@@ -206,17 +206,29 @@ function FindJobs() {
   // RESUME ANALYSIS
   // ------------------------------------
 
-  const handleResumeUpload =
-    async () => {
+  const handleResumeUpload = async () => {
 
-      if (!resumeFile) {
+  // ------------------------------------
+  // LOGIN CHECK
+  // ------------------------------------
 
-        alert(
-          "Please upload PDF Resume."
-        );
+  const token = localStorage.getItem("token");
 
-        return;
-      }
+  if (!token) {
+    alert("Please login first to use AI Resume Analysis.");
+    return;
+  }
+
+  // ------------------------------------
+  // RESUME CHECK
+  // ------------------------------------
+
+  if (!resumeFile) {
+
+    alert("Please upload PDF Resume.");
+
+    return;
+  }
 
       try {
 
