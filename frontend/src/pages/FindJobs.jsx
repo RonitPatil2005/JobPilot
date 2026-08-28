@@ -10,9 +10,14 @@ import Footer from "../components/Footer";
 
 import { searchJobs } from "../services/jobService";
 import { uploadResume } from "../services/resumeService";
+
 import "./FindJobs.css";
 
 function FindJobs() {
+
+  // ------------------------------------
+  // JOB SEARCH STATES
+  // ------------------------------------
 
   const [keyword, setKeyword] = useState("");
   const [location, setLocation] = useState("");
@@ -20,21 +25,31 @@ function FindJobs() {
 
   const [loading, setLoading] = useState(false);
 
-  // Resume states
+
+  // ------------------------------------
+  // RESUME ANALYSIS STATES
+  // ------------------------------------
+
   const [resumeFile, setResumeFile] = useState(null);
+
   const [skills, setSkills] = useState([]);
-  const [suggestedRole, setSuggestedRole] = useState("");
-  const [alternativeRoles, setAlternativeRoles] = useState([]);
 
-  const [atsScore, setAtsScore] = useState(null);
-  const [strengths, setStrengths] = useState([]);
-  const [weaknesses, setWeaknesses] = useState([]);
-  const [suggestions, setSuggestions] = useState([]);
+  const [suggestedRole, setSuggestedRole] =
+    useState("");
 
-  const [analysisSource, setAnalysisSource] = useState("");
+  const [resumeLoading, setResumeLoading] =
+    useState(false);
 
-  const [resumeLoading, setResumeLoading] = useState(false);
-  const [roleLoading, setRoleLoading] = useState(false);
+  const [resumeError, setResumeError] =
+    useState("");
+
+
+  // ------------------------------------
+  // SUGGESTED ROLE SEARCH STATE
+  // ------------------------------------
+
+  const [roleLoading, setRoleLoading] =
+    useState(false);
 
 
   // ------------------------------------
@@ -43,23 +58,45 @@ function FindJobs() {
 
   const handleSearch = async () => {
 
-    const token = localStorage.getItem("token");
+    const token =
+      localStorage.getItem("token");
 
     if (!token) {
       alert("Please login first.");
       return;
     }
 
+    if (!keyword.trim()) {
+      alert("Please enter a job title or skill.");
+      return;
+    }
+
     try {
 
-      setLoading(true);
-
-      const data = await searchJobs(
+      console.log(
+        "Searching jobs:",
         keyword,
         location
       );
 
-      setJobs(data);
+      setLoading(true);
+
+      const data =
+        await searchJobs(
+          keyword,
+          location
+        );
+
+      console.log(
+        "Jobs received:",
+        data
+      );
+
+      setJobs(
+        Array.isArray(data)
+          ? data
+          : []
+      );
 
       setTimeout(() => {
 
@@ -73,10 +110,13 @@ function FindJobs() {
 
     } catch (error) {
 
-      console.error(error);
+      console.error(
+        "Job Search Error:",
+        error
+      );
 
       alert(
-        "Unable to fetch jobs"
+        "Unable to fetch jobs."
       );
 
     } finally {
@@ -88,154 +128,315 @@ function FindJobs() {
 
 
   // ------------------------------------
-  // RESUME ANALYSIS
+  // RESUME FILE SELECT
   // ------------------------------------
 
-  const handleResumeUpload = async () => {
+  const handleResumeChange = (e) => {
 
-    if (!resumeFile) {
+    const selectedFile =
+      e.target.files?.[0];
+
+    if (!selectedFile) {
+      return;
+    }
+
+    console.log(
+      "Resume selected:",
+      selectedFile
+    );
+
+    // Check PDF
+    if (
+      selectedFile.type !==
+      "application/pdf"
+    ) {
 
       alert(
-        "Please upload PDF Resume"
+        "Please upload a PDF resume."
       );
+
+      e.target.value = "";
+      setResumeFile(null);
 
       return;
     }
 
-    try {
+    setResumeFile(
+      selectedFile
+    );
 
-      setResumeLoading(true);
+    // Clear previous results
+    setSkills([]);
+    setSuggestedRole("");
+    setResumeError("");
 
-      const data = await uploadResume(
-        resumeFile
-      );
-
-      console.log(
-        "Resume Analysis Result:",
-        data
-      );
-
-
-      // --------------------------------
-      // Basic results
-      // --------------------------------
-
-      setSkills(
-        data.skills || []
-      );
-
-      setSuggestedRole(
-        data.suggestedRole || ""
-      );
-
-
-      // --------------------------------
-      // Gemini detailed results
-      // --------------------------------
-
-      setAlternativeRoles(
-        data.alternativeRoles || []
-      );
-
-      setAtsScore(
-        data.atsScore ?? null
-      );
-
-      setStrengths(
-        data.strengths || []
-      );
-
-      setWeaknesses(
-        data.weaknesses || []
-      );
-
-      setSuggestions(
-        data.suggestions || []
-      );
-
-      setAnalysisSource(
-        data.analysisSource || ""
-      );
-
-
-    } catch (error) {
-
-      console.error(
-        "Resume Analysis Error:",
-        error
-      );
-
-      alert(
-        "Resume analysis failed"
-      );
-
-    } finally {
-
-      setResumeLoading(false);
-
-    }
   };
 
 
   // ------------------------------------
-  // SEARCH JOBS USING SUGGESTED ROLE
+  // RESUME ANALYSIS
   // ------------------------------------
 
-  const searchSuggestedRole = async () => {
+  const handleResumeUpload =
+    async () => {
 
-    if (!suggestedRole) return;
+      if (!resumeFile) {
 
-    try {
-
-      setRoleLoading(true);
-
-      setKeyword(
-        suggestedRole
-      );
-
-      const data =
-        await searchJobs(
-          suggestedRole,
-          location
+        alert(
+          "Please upload PDF Resume."
         );
 
-      setJobs(data);
+        return;
+      }
 
-      setTimeout(() => {
+      try {
 
-        document
-          .querySelector(
-            ".jobs-section"
-          )
-          ?.scrollIntoView({
-            behavior: "smooth"
-          });
+        console.log(
+          "Starting resume analysis..."
+        );
 
-      }, 300);
+        console.log(
+          "File:",
+          resumeFile.name
+        );
 
-    } catch (error) {
+        setResumeLoading(true);
+        setResumeError("");
 
-      console.log(error);
+        const data =
+          await uploadResume(
+            resumeFile
+          );
 
-      alert(
-        "Unable to fetch jobs"
-      );
+        console.log(
+          "Resume analysis response:",
+          data
+        );
 
-    } finally {
 
-      setRoleLoading(false);
+        // --------------------------------
+        // CHECK BACKEND RESPONSE
+        // --------------------------------
 
-    }
-  };
+        if (!data) {
 
+          throw new Error(
+            "Empty response from server"
+          );
+
+        }
+
+
+        // --------------------------------
+        // HANDLE API ERROR RESPONSE
+        // --------------------------------
+
+        if (
+          data.message &&
+          !data.skills &&
+          !data.suggestedRole
+        ) {
+
+          throw new Error(
+            data.message
+          );
+
+        }
+
+
+        // --------------------------------
+        // SET SKILLS
+        // --------------------------------
+
+        setSkills(
+          Array.isArray(data.skills)
+            ? data.skills
+            : []
+        );
+
+
+        // --------------------------------
+        // SET SUGGESTED ROLE
+        // --------------------------------
+
+        setSuggestedRole(
+          data.suggestedRole || ""
+        );
+
+
+        // --------------------------------
+        // CHECK ANALYSIS SOURCE
+        // --------------------------------
+
+        if (
+          data.analysisSource ===
+          "keyword-fallback"
+        ) {
+
+          console.warn(
+            "Gemini unavailable. Keyword fallback used."
+          );
+
+        } else if (
+          data.analysisSource ===
+          "gemini"
+        ) {
+
+          console.log(
+            "Gemini analysis successful."
+          );
+
+        }
+
+
+        // --------------------------------
+        // IF BOTH ARE EMPTY
+        // --------------------------------
+
+        if (
+          (!data.skills ||
+            data.skills.length === 0) &&
+          !data.suggestedRole
+        ) {
+
+          setResumeError(
+            "Unable to extract useful information from this resume."
+          );
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Resume analysis error:",
+          error
+        );
+
+        console.error(
+          "Server response:",
+          error.response?.data
+        );
+
+
+        setSkills([]);
+        setSuggestedRole("");
+
+
+        setResumeError(
+          "Resume analysis failed. Please try again."
+        );
+
+      } finally {
+
+        setResumeLoading(false);
+
+      }
+
+    };
+
+
+  // ------------------------------------
+  // SEARCH USING SUGGESTED ROLE
+  // ------------------------------------
+
+  const searchSuggestedRole =
+    async () => {
+
+      if (!suggestedRole) {
+        return;
+      }
+
+      const token =
+        localStorage.getItem("token");
+
+      if (!token) {
+
+        alert(
+          "Please login first."
+        );
+
+        return;
+      }
+
+      try {
+
+        console.log(
+          "Searching suggested role:",
+          suggestedRole
+        );
+
+        setRoleLoading(true);
+
+        setKeyword(
+          suggestedRole
+        );
+
+
+        const data =
+          await searchJobs(
+            suggestedRole,
+            location
+          );
+
+
+        console.log(
+          "Suggested role jobs:",
+          data
+        );
+
+
+        setJobs(
+          Array.isArray(data)
+            ? data
+            : []
+        );
+
+
+        setTimeout(() => {
+
+          document
+            .querySelector(".jobs-section")
+            ?.scrollIntoView({
+              behavior: "smooth"
+            });
+
+        }, 300);
+
+      } catch (error) {
+
+        console.error(
+          "Suggested Role Search Error:",
+          error
+        );
+
+        alert(
+          "Unable to fetch jobs."
+        );
+
+      } finally {
+
+        setRoleLoading(false);
+
+      }
+
+    };
+
+
+  // ------------------------------------
+  // RENDER
+  // ------------------------------------
 
   return (
     <>
       <Navbar />
 
+
       <div className="jobs-page">
 
-        {/* HERO */}
+
+        {/* ==================================
+            HERO / JOB SEARCH
+        ================================== */}
 
         <div className="jobs-hero">
 
@@ -252,23 +453,42 @@ function FindJobs() {
 
           <div className="jobs-search">
 
+
+            {/* JOB KEYWORD */}
+
             <div className="search-field">
 
               <FaSearch />
 
               <input
                 id="job-keyword"
-                name="job-keyword"
+                name="jobKeyword"
                 type="text"
                 placeholder="Job Title, Skills..."
                 value={keyword}
+                autoComplete="off"
                 onChange={(e) =>
-                  setKeyword(e.target.value)
+                  setKeyword(
+                    e.target.value
+                  )
                 }
+                onKeyDown={(e) => {
+
+                  if (
+                    e.key === "Enter"
+                  ) {
+
+                    handleSearch();
+
+                  }
+
+                }}
               />
 
             </div>
 
+
+            {/* LOCATION */}
 
             <div className="search-field">
 
@@ -276,28 +496,48 @@ function FindJobs() {
 
               <input
                 id="job-location"
-                name="job-location"
+                name="jobLocation"
                 type="text"
                 placeholder="Location"
                 value={location}
+                autoComplete="off"
                 onChange={(e) =>
-                  setLocation(e.target.value)
+                  setLocation(
+                    e.target.value
+                  )
                 }
+                onKeyDown={(e) => {
+
+                  if (
+                    e.key === "Enter"
+                  ) {
+
+                    handleSearch();
+
+                  }
+
+                }}
               />
 
             </div>
 
 
+            {/* SEARCH BUTTON */}
+
             <button
+              type="button"
               onClick={
                 handleSearch
               }
-            >
-              {
+              disabled={
                 loading
-                  ? "Searching..."
-                  : "Search Jobs"
               }
+            >
+
+              {loading
+                ? "Searching..."
+                : "Search Jobs"}
+
             </button>
 
           </div>
@@ -305,7 +545,10 @@ function FindJobs() {
         </div>
 
 
-        {/* RESUME ANALYZER */}
+
+        {/* ==================================
+            RESUME ANALYZER
+        ================================== */}
 
         <div className="resume-section">
 
@@ -324,102 +567,102 @@ function FindJobs() {
 
             <FaFilePdf />
 
+
+            {/* RESUME INPUT */}
+
             <input
               id="resume-file"
               name="resume"
               type="file"
-              accept=".pdf"
-              onChange={(e) =>
-                setResumeFile(
-                  e.target.files[0]
-                )
+              accept=".pdf,application/pdf"
+              onChange={
+                handleResumeChange
               }
             />
 
 
+            {/* ANALYZE BUTTON */}
+
             <button
+              type="button"
               onClick={
                 handleResumeUpload
               }
-            >
-              {
+              disabled={
                 resumeLoading
-                  ? "Analyzing..."
-                  : "Analyze Resume"
               }
+            >
+
+              {resumeLoading
+                ? "Analyzing..."
+                : "Analyze Resume"}
+
             </button>
 
           </div>
 
 
-          {/* --------------------------------
-              RESUME RESULTS
-          -------------------------------- */}
+          {/* SELECTED FILE */}
 
-          {skills.length > 0 && (
+          {resumeFile && (
+
+            <p className="selected-file">
+
+              Selected:
+              {" "}
+              {resumeFile.name}
+
+            </p>
+
+          )}
+
+
+          {/* RESUME ERROR */}
+
+          {resumeError && (
+
+            <p className="resume-error">
+
+              {resumeError}
+
+            </p>
+
+          )}
+
+
+
+          {/* ==================================
+              RESUME RESULT
+          ================================== */}
+
+          {(skills.length > 0 ||
+            suggestedRole) && (
 
             <div className="resume-result">
 
 
               {/* SKILLS */}
 
-              <h3>
-                Skills Found
-              </h3>
-
-              <div className="skills-list">
-
-                {skills.map(
-                  (
-                    skill,
-                    index
-                  ) => (
-
-                    <span
-                      key={index}
-                    >
-                      {skill}
-                    </span>
-
-                  )
-                )}
-
-              </div>
-
-
-              {/* SUGGESTED ROLE */}
-
-              <h3>
-                Suggested Role
-              </h3>
-
-              <p className="role-text">
-                {suggestedRole}
-              </p>
-
-
-              {/* ALTERNATIVE ROLES */}
-
-              {alternativeRoles.length > 0 && (
+              {skills.length > 0 && (
 
                 <>
-
                   <h3>
-                    Alternative Roles
+                    Skills Found
                   </h3>
+
 
                   <div className="skills-list">
 
-                    {alternativeRoles.map(
+                    {skills.map(
                       (
-                        role,
+                        skill,
                         index
                       ) => (
 
                         <span
-                          key={index}
+                          key={`${skill}-${index}`}
                         >
-                          {role}
+                          {skill}
                         </span>
 
                       )
@@ -432,159 +675,44 @@ function FindJobs() {
               )}
 
 
-              {/* ATS SCORE */}
 
-              {atsScore !== null && (
+              {/* SUGGESTED ROLE */}
+
+              {suggestedRole && (
 
                 <>
 
                   <h3>
-                    ATS Score
+                    Suggested Role
                   </h3>
 
                   <p className="role-text">
-                    {atsScore}/100
+                    {suggestedRole}
                   </p>
 
-                </>
 
-              )}
+                  {/* SEARCH ROLE BUTTON */}
 
+                  <button
+                    type="button"
+                    className="suggested-btn"
+                    onClick={
+                      searchSuggestedRole
+                    }
+                    disabled={
+                      roleLoading
+                    }
+                  >
 
-              {/* STRENGTHS */}
+                    {roleLoading
+                      ? "Searching..."
+                      : "Search Jobs For This Role"}
 
-              {strengths.length > 0 && (
-
-                <>
-
-                  <h3>
-                    Strengths
-                  </h3>
-
-                  <ul>
-
-                    {strengths.map(
-                      (
-                        strength,
-                        index
-                      ) => (
-
-                        <li
-                          key={index}
-                        >
-                          {strength}
-                        </li>
-
-                      )
-                    )}
-
-                  </ul>
+                  </button>
 
                 </>
 
               )}
-
-
-              {/* WEAKNESSES */}
-
-              {weaknesses.length > 0 && (
-
-                <>
-
-                  <h3>
-                    Areas to Improve
-                  </h3>
-
-                  <ul>
-
-                    {weaknesses.map(
-                      (
-                        weakness,
-                        index
-                      ) => (
-
-                        <li
-                          key={index}
-                        >
-                          {weakness}
-                        </li>
-
-                      )
-                    )}
-
-                  </ul>
-
-                </>
-
-              )}
-
-
-              {/* SUGGESTIONS */}
-
-              {suggestions.length > 0 && (
-
-                <>
-
-                  <h3>
-                    Resume Improvement Suggestions
-                  </h3>
-
-                  <ul>
-
-                    {suggestions.map(
-                      (
-                        suggestion,
-                        index
-                      ) => (
-
-                        <li
-                          key={index}
-                        >
-                          {suggestion}
-                        </li>
-
-                      )
-                    )}
-
-                  </ul>
-
-                </>
-
-              )}
-
-
-              {/* ANALYSIS SOURCE */}
-
-              {analysisSource ===
-                "keyword-fallback" && (
-
-                  <p>
-                    AI analysis is temporarily
-                    unavailable due to a
-                    technical error.
-                  </p>
-
-                )}
-
-
-              {/* SEARCH SUGGESTED ROLE */}
-
-              <button
-                className="suggested-btn"
-                onClick={
-                  searchSuggestedRole
-                }
-                disabled={
-                  roleLoading
-                }
-              >
-                {
-                  roleLoading
-                    ? "Searching..."
-                    : "Search Jobs For This Role"
-                }
-              </button>
-
 
             </div>
 
@@ -593,13 +721,32 @@ function FindJobs() {
         </div>
 
 
-        {/* JOB RESULTS */}
+
+        {/* ==================================
+            JOB RESULTS
+        ================================== */}
 
         <div className="jobs-section">
 
           <h2>
-            {jobs.length} Jobs Found
+
+            {jobs.length}
+            {" "}
+            Jobs Found
+
           </h2>
+
+
+          {jobs.length === 0 && (
+
+            <p className="no-jobs">
+
+              Search for a job to see
+              available opportunities.
+
+            </p>
+
+          )}
 
 
           <div className="jobs-grid">
@@ -612,56 +759,122 @@ function FindJobs() {
 
                 <div
                   className="job-card"
-                  key={index}
+                  key={
+                    job.job_id ||
+                    index
+                  }
                 >
 
+
+                  {/* JOB TITLE */}
+
                   <h3>
-                    {job.job_title}
+                    {
+                      job.job_title ||
+                      "Job Title N/A"
+                    }
                   </h3>
+
+
+                  {/* COMPANY */}
 
                   <h4>
                     {
-                      job.employer_name
+                      job.employer_name ||
+                      "Company N/A"
                     }
                   </h4>
 
+
+                  {/* LOCATION */}
+
                   <p>
                     📍{" "}
+
                     {
                       job.job_city ||
+                      job.job_state ||
                       job.job_country ||
                       "Location N/A"
                     }
+
                   </p>
 
+
+                  {/* POSTED DATE */}
+
                   <p>
-                    Source:{" "}
+
+                    📅 Posted:{" "}
+
                     {
-                      job.job_publisher
+                      job.job_posted_at_datetime
+                        ? new Date(
+                            job.job_posted_at_datetime
+                          ).toLocaleDateString()
+                        : job.job_posted_at_timestamp
+                        ? new Date(
+                            Number(
+                              job.job_posted_at_timestamp
+                            ) * 1000
+                          ).toLocaleDateString()
+                        : "Date N/A"
                     }
+
                   </p>
 
+
+                  {/* SOURCE */}
+
                   <p>
-                    Employment:{" "}
+
+                    Source:
+                    {" "}
+
+                    {
+                      job.job_publisher ||
+                      "N/A"
+                    }
+
+                  </p>
+
+
+                  {/* EMPLOYMENT */}
+
+                  <p>
+
+                    Employment:
+                    {" "}
+
                     {
                       job.job_employment_type ||
                       "N/A"
                     }
+
                   </p>
 
-                  <a
-                    href={
-                      job.job_apply_link
-                    }
-                    target="_blank"
-                    rel="noreferrer"
-                  >
 
-                    <button>
-                      Apply Now
-                    </button>
+                  {/* APPLY */}
 
-                  </a>
+                  {job.job_apply_link && (
+
+                    <a
+                      href={
+                        job.job_apply_link
+                      }
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+
+                      <button
+                        type="button"
+                      >
+                        Apply Now
+                      </button>
+
+                    </a>
+
+                  )}
 
                 </div>
 
@@ -674,7 +887,9 @@ function FindJobs() {
 
       </div>
 
+
       <Footer />
+
     </>
   );
 }
