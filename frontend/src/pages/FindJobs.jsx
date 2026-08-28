@@ -2,7 +2,12 @@ import { useState } from "react";
 import {
   FaSearch,
   FaMapMarkerAlt,
-  FaFilePdf
+  FaFilePdf,
+  FaCheckCircle,
+  FaExclamationTriangle,
+  FaLightbulb,
+  FaBriefcase,
+  FaStar
 } from "react-icons/fa";
 
 import Navbar from "../components/Navbar";
@@ -37,10 +42,28 @@ function FindJobs() {
   const [suggestedRole, setSuggestedRole] =
     useState("");
 
+  const [alternativeRoles, setAlternativeRoles] =
+    useState([]);
+
+  const [atsScore, setAtsScore] =
+    useState(null);
+
+  const [strengths, setStrengths] =
+    useState([]);
+
+  const [weaknesses, setWeaknesses] =
+    useState([]);
+
+  const [suggestions, setSuggestions] =
+    useState([]);
+
   const [resumeLoading, setResumeLoading] =
     useState(false);
 
   const [resumeError, setResumeError] =
+    useState("");
+
+  const [analysisSource, setAnalysisSource] =
     useState("");
 
 
@@ -145,7 +168,6 @@ function FindJobs() {
       selectedFile
     );
 
-    // Check PDF
     if (
       selectedFile.type !==
       "application/pdf"
@@ -166,9 +188,16 @@ function FindJobs() {
     );
 
     // Clear previous results
+
     setSkills([]);
     setSuggestedRole("");
+    setAlternativeRoles([]);
+    setAtsScore(null);
+    setStrengths([]);
+    setWeaknesses([]);
+    setSuggestions([]);
     setResumeError("");
+    setAnalysisSource("");
 
   };
 
@@ -214,10 +243,6 @@ function FindJobs() {
         );
 
 
-        // --------------------------------
-        // CHECK BACKEND RESPONSE
-        // --------------------------------
-
         if (!data) {
 
           throw new Error(
@@ -228,7 +253,7 @@ function FindJobs() {
 
 
         // --------------------------------
-        // HANDLE API ERROR RESPONSE
+        // HANDLE SERVER ERROR
         // --------------------------------
 
         if (
@@ -245,7 +270,7 @@ function FindJobs() {
 
 
         // --------------------------------
-        // SET SKILLS
+        // SKILLS
         // --------------------------------
 
         setSkills(
@@ -256,7 +281,7 @@ function FindJobs() {
 
 
         // --------------------------------
-        // SET SUGGESTED ROLE
+        // SUGGESTED ROLE
         // --------------------------------
 
         setSuggestedRole(
@@ -265,7 +290,73 @@ function FindJobs() {
 
 
         // --------------------------------
-        // CHECK ANALYSIS SOURCE
+        // ALTERNATIVE ROLES
+        // --------------------------------
+
+        setAlternativeRoles(
+          Array.isArray(
+            data.alternativeRoles
+          )
+            ? data.alternativeRoles
+            : []
+        );
+
+
+        // --------------------------------
+        // ATS SCORE
+        // --------------------------------
+
+        setAtsScore(
+          typeof data.atsScore === "number"
+            ? data.atsScore
+            : null
+        );
+
+
+        // --------------------------------
+        // STRENGTHS
+        // --------------------------------
+
+        setStrengths(
+          Array.isArray(data.strengths)
+            ? data.strengths
+            : []
+        );
+
+
+        // --------------------------------
+        // WEAKNESSES
+        // --------------------------------
+
+        setWeaknesses(
+          Array.isArray(data.weaknesses)
+            ? data.weaknesses
+            : []
+        );
+
+
+        // --------------------------------
+        // SUGGESTIONS
+        // --------------------------------
+
+        setSuggestions(
+          Array.isArray(data.suggestions)
+            ? data.suggestions
+            : []
+        );
+
+
+        // --------------------------------
+        // ANALYSIS SOURCE
+        // --------------------------------
+
+        setAnalysisSource(
+          data.analysisSource || ""
+        );
+
+
+        // --------------------------------
+        // FALLBACK MESSAGE
         // --------------------------------
 
         if (
@@ -277,20 +368,11 @@ function FindJobs() {
             "Gemini unavailable. Keyword fallback used."
           );
 
-        } else if (
-          data.analysisSource ===
-          "gemini"
-        ) {
-
-          console.log(
-            "Gemini analysis successful."
-          );
-
         }
 
 
         // --------------------------------
-        // IF BOTH ARE EMPTY
+        // EMPTY RESULT CHECK
         // --------------------------------
 
         if (
@@ -320,6 +402,11 @@ function FindJobs() {
 
         setSkills([]);
         setSuggestedRole("");
+        setAlternativeRoles([]);
+        setAtsScore(null);
+        setStrengths([]);
+        setWeaknesses([]);
+        setSuggestions([]);
 
 
         setResumeError(
@@ -395,7 +482,9 @@ function FindJobs() {
         setTimeout(() => {
 
           document
-            .querySelector(".jobs-section")
+            .querySelector(
+              ".jobs-section"
+            )
             ?.scrollIntoView({
               behavior: "smooth"
             });
@@ -430,9 +519,7 @@ function FindJobs() {
     <>
       <Navbar />
 
-
       <div className="jobs-page">
-
 
         {/* ==================================
             HERO / JOB SEARCH
@@ -452,7 +539,6 @@ function FindJobs() {
 
 
           <div className="jobs-search">
-
 
             {/* JOB KEYWORD */}
 
@@ -545,7 +631,6 @@ function FindJobs() {
         </div>
 
 
-
         {/* ==================================
             RESUME ANALYZER
         ================================== */}
@@ -563,12 +648,11 @@ function FindJobs() {
           </p>
 
 
+          {/* UPLOAD */}
+
           <div className="resume-upload">
 
             <FaFilePdf />
-
-
-            {/* RESUME INPUT */}
 
             <input
               id="resume-file"
@@ -579,9 +663,6 @@ function FindJobs() {
                 handleResumeChange
               }
             />
-
-
-            {/* ANALYZE BUTTON */}
 
             <button
               type="button"
@@ -617,7 +698,7 @@ function FindJobs() {
           )}
 
 
-          {/* RESUME ERROR */}
+          {/* ERROR */}
 
           {resumeError && (
 
@@ -630,26 +711,120 @@ function FindJobs() {
           )}
 
 
-
           {/* ==================================
               RESUME RESULT
           ================================== */}
 
           {(skills.length > 0 ||
-            suggestedRole) && (
+            suggestedRole ||
+            alternativeRoles.length > 0 ||
+            atsScore !== null ||
+            strengths.length > 0 ||
+            weaknesses.length > 0 ||
+            suggestions.length > 0) && (
 
             <div className="resume-result">
 
 
-              {/* SKILLS */}
+              {/* ==================================
+                  ANALYSIS SOURCE
+              ================================== */}
+
+              {analysisSource === "gemini" && (
+
+                <div className="analysis-source success">
+
+                  <FaCheckCircle />
+
+                  <span>
+                    Resume analyzed using AI
+                  </span>
+
+                </div>
+
+              )}
+
+
+              {analysisSource ===
+                "keyword-fallback" && (
+
+                <div className="analysis-source warning">
+
+                  <FaExclamationTriangle />
+
+                  <span>
+                    AI analysis is temporarily unavailable due to a technical error. Basic resume analysis is being used.
+                  </span>
+
+                </div>
+
+              )}
+
+
+              {/* ==================================
+                  ATS SCORE
+              ================================== */}
+
+              {atsScore !== null && (
+
+                <div className="ats-section">
+
+                  <h3>
+                    <FaStar />
+                    ATS Resume Score
+                  </h3>
+
+                  <div className="ats-score">
+
+                    <div className="ats-number">
+
+                      {atsScore}
+
+                      <span>
+                        /100
+                      </span>
+
+                    </div>
+
+                    <div className="ats-bar">
+
+                      <div
+                        className="ats-progress"
+                        style={{
+                          width: `${Math.min(
+                            Math.max(
+                              atsScore,
+                              0
+                            ),
+                            100
+                          )}%`
+                        }}
+                      />
+
+                    </div>
+
+                  </div>
+
+                  <p>
+                    This is an ATS-style estimate based on your resume content, skills, projects, experience and keywords.
+                  </p>
+
+                </div>
+
+              )}
+
+
+              {/* ==================================
+                  SKILLS
+              ================================== */}
 
               {skills.length > 0 && (
 
-                <>
+                <div className="analysis-card">
+
                   <h3>
                     Skills Found
                   </h3>
-
 
                   <div className="skills-list">
 
@@ -670,28 +845,27 @@ function FindJobs() {
 
                   </div>
 
-                </>
+                </div>
 
               )}
 
 
-
-              {/* SUGGESTED ROLE */}
+              {/* ==================================
+                  SUGGESTED ROLE
+              ================================== */}
 
               {suggestedRole && (
 
-                <>
+                <div className="analysis-card suggested-role-card">
 
                   <h3>
-                    Suggested Role
+                    <FaBriefcase />
+                    Best Match Role
                   </h3>
 
                   <p className="role-text">
                     {suggestedRole}
                   </p>
-
-
-                  {/* SEARCH ROLE BUTTON */}
 
                   <button
                     type="button"
@@ -710,7 +884,156 @@ function FindJobs() {
 
                   </button>
 
-                </>
+                </div>
+
+              )}
+
+
+              {/* ==================================
+                  ALTERNATIVE ROLES
+              ================================== */}
+
+              {alternativeRoles.length > 0 && (
+
+                <div className="analysis-card">
+
+                  <h3>
+                    <FaBriefcase />
+                    Other Suitable Roles
+                  </h3>
+
+                  <div className="alternative-roles">
+
+                    {alternativeRoles.map(
+                      (
+                        role,
+                        index
+                      ) => (
+
+                        <span
+                          key={`${role}-${index}`}
+                          className="alternative-role"
+                        >
+                          {role}
+                        </span>
+
+                      )
+                    )}
+
+                  </div>
+
+                </div>
+
+              )}
+
+
+              {/* ==================================
+                  STRENGTHS
+              ================================== */}
+
+              {strengths.length > 0 && (
+
+                <div className="analysis-card">
+
+                  <h3>
+                    <FaCheckCircle />
+                    Resume Strengths
+                  </h3>
+
+                  <ul className="analysis-list">
+
+                    {strengths.map(
+                      (
+                        strength,
+                        index
+                      ) => (
+
+                        <li
+                          key={index}
+                        >
+                          {strength}
+                        </li>
+
+                      )
+                    )}
+
+                  </ul>
+
+                </div>
+
+              )}
+
+
+              {/* ==================================
+                  WEAKNESSES
+              ================================== */}
+
+              {weaknesses.length > 0 && (
+
+                <div className="analysis-card">
+
+                  <h3>
+                    <FaExclamationTriangle />
+                    Areas to Improve
+                  </h3>
+
+                  <ul className="analysis-list">
+
+                    {weaknesses.map(
+                      (
+                        weakness,
+                        index
+                      ) => (
+
+                        <li
+                          key={index}
+                        >
+                          {weakness}
+                        </li>
+
+                      )
+                    )}
+
+                  </ul>
+
+                </div>
+
+              )}
+
+
+              {/* ==================================
+                  SUGGESTIONS
+              ================================== */}
+
+              {suggestions.length > 0 && (
+
+                <div className="analysis-card">
+
+                  <h3>
+                    <FaLightbulb />
+                    Resume Improvement Suggestions
+                  </h3>
+
+                  <ul className="analysis-list">
+
+                    {suggestions.map(
+                      (
+                        suggestion,
+                        index
+                      ) => (
+
+                        <li
+                          key={index}
+                        >
+                          {suggestion}
+                        </li>
+
+                      )
+                    )}
+
+                  </ul>
+
+                </div>
 
               )}
 
@@ -719,7 +1042,6 @@ function FindJobs() {
           )}
 
         </div>
-
 
 
         {/* ==================================
@@ -765,9 +1087,6 @@ function FindJobs() {
                   }
                 >
 
-
-                  {/* JOB TITLE */}
-
                   <h3>
                     {
                       job.job_title ||
@@ -776,8 +1095,6 @@ function FindJobs() {
                   </h3>
 
 
-                  {/* COMPANY */}
-
                   <h4>
                     {
                       job.employer_name ||
@@ -785,8 +1102,6 @@ function FindJobs() {
                     }
                   </h4>
 
-
-                  {/* LOCATION */}
 
                   <p>
                     📍{" "}
@@ -800,8 +1115,6 @@ function FindJobs() {
 
                   </p>
 
-
-                  {/* POSTED DATE */}
 
                   <p>
 
@@ -824,8 +1137,6 @@ function FindJobs() {
                   </p>
 
 
-                  {/* SOURCE */}
-
                   <p>
 
                     Source:
@@ -839,8 +1150,6 @@ function FindJobs() {
                   </p>
 
 
-                  {/* EMPLOYMENT */}
-
                   <p>
 
                     Employment:
@@ -853,8 +1162,6 @@ function FindJobs() {
 
                   </p>
 
-
-                  {/* APPLY */}
 
                   {job.job_apply_link && (
 
