@@ -1,4 +1,4 @@
-# 🚀 JobPilot - AI-Powered Centralized Job Portal
+# 🚀 JobPilot - Centralized Job Aggregation & AI Resume Analysis Platform 
 
 JobPilot is a full-stack MERN web application that brings job discovery and AI-powered resume analysis into one platform. It aggregates job listings from external sources, allows users to search by role and location, and analyzes PDF resumes to identify skills, recommend suitable roles, and provide ATS-style resume feedback.
 
